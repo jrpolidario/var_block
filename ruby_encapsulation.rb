@@ -1,48 +1,45 @@
 require 'byebug'
 
-class With
-  def initialize(**variables)
-    @variables = variables
-  end
+module With
+	def self.included(base)
+		base.extend ClassMethods
+	end
+
+	def getvar(block)
+		instance_exec &block
+	end
+
+	module ClassMethods
+		def with(variables, context: nil)
+			triggered_variables = TriggeredVariables.new
+
+		 	variables.each do |key, value|
+		 		triggered_variables[key] = value
+		 	end
+
+		  yield triggered_variables
+		end
+	end
 end
 
 class TriggeredVariables < Hash
-	def initialize(context:)
-		@context = context
+	include With::ClassMethods
+
+	def initialize(instance: nil)
+		if instance
+			raise '`instance` should be a `TriggeredVariables` object' unless instance.is_a? TriggeredVariables
+			self.merge(instance)
+		end
+		self
 	end
 
-	def [](index)
-		byebug
-		@context.instance_exec &super(index)
+	def get(context, index)
+		context.instance_exec &self[index]
 	end
-end
 
-def with(variables)
-  # ref = With.new(variables)
-
-  # variables.each do |key, value|
-  # 	define_method key do
-  # 		instance_exec &value
-  # 	end
-  #   # instance_variable_set("@#{key}".to_sym, value)
-  #   yield
-  #   # remove_instance_variable("@#{key}".to_sym)
-  # end
-  # variables = {}
-  # variables_proc_binding = variables_proc.().binding
-  # defined_variables = variables_proc.().binding.local_variables
- 	# defined_variables.each do |defined_variable|
- 	# 	variables[defined_variable] = variables_proc_binding.local_variable_get(defined_variable)
- 	# end
-
- 	# asdf = 'asdfasdf'
- 	triggered_variables = TriggeredVariables.new(context: self)
-
- 	variables.each do |key, value|
- 		triggered_variables[key] = value
- 	end
-
-  yield triggered_variables #variables
+	def with(variables)
+		super(variables, context: self)
+	end
 end
 
 module Validators
@@ -66,6 +63,7 @@ class Record
 end
 
 class Post < Record
+	include With
   attr_accessor :title, :disabled
 
   def initialize(**args)
@@ -76,15 +74,12 @@ class Post < Record
 
   foo = 'bar'
 
-  # with(
-  # 	fruit = -> { foo }
-  # ) do
-
-  with(vegetable: -> { 'bean' }, somecondition: -> { disabled }) do |variables|
-    validates :someattribute, presence: true, if: -> { variables[:somecondition] }
-  end
+  with(fruit: -> { foo }) do |v|
+	  v.with(vegetable: -> { 'bean' }, somecondition: -> { disabled }) do |vv|
+	    validates :someattribute, presence: true, if: -> { getvar(vv[:somecondition]) }
+	  end
   # validates :someattribute, presence: true, if: -> { self.instance_exec &self.class.instance_variable_get(:@somecondition) }
-  # end
+  end
 end
 
 # This will be validated from code above
