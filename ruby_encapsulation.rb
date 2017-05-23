@@ -1,45 +1,49 @@
 require 'byebug'
 
 module With
-	def self.included(base)
-		base.extend ClassMethods
-	end
+  def self.included(base)
+    base.extend ClassMethods
+  end
 
-	def getvar(block)
-		instance_exec &block
-	end
+  def getvar(triggered_variables, index)
+    instance_exec &triggered_variables[index]
+  end
 
-	module ClassMethods
-		def with(variables, context: nil)
-			triggered_variables = TriggeredVariables.new
+  module ClassMethods
+    def with(variables, context: nil)
+      triggered_variables = TriggeredVariables.new(instance: context)
 
-		 	variables.each do |key, value|
-		 		triggered_variables[key] = value
-		 	end
+      variables.each do |key, value|
+        triggered_variables[key] = value
+      end
 
-		  yield triggered_variables
-		end
-	end
+      yield triggered_variables
+    end
+
+    def getvar(block)
+      instance_exec &block
+    end
+  end
 end
 
 class TriggeredVariables < Hash
-	include With::ClassMethods
+  include With::ClassMethods
 
-	def initialize(instance: nil)
-		if instance
-			raise '`instance` should be a `TriggeredVariables` object' unless instance.is_a? TriggeredVariables
-			self.merge(instance)
-		end
-		self
-	end
+  def initialize(instance: nil)
+    if instance
+      raise '`instance` should be a `TriggeredVariables` object' unless instance.is_a? TriggeredVariables
+      self.merge!(instance)
+    end
+    self
+  end
 
-	def get(context, index)
-		context.instance_exec &self[index]
-	end
+  def get(context, index)
+    context.instance_exec &self[index]
+  end
 
-	def with(variables)
-		super(variables, context: self)
-	end
+  def with(variables)
+    super(variables, context: self)
+  end
 end
 
 module Validators
@@ -63,7 +67,7 @@ class Record
 end
 
 class Post < Record
-	include With
+  include With
   attr_accessor :title, :disabled
 
   def initialize(**args)
@@ -75,10 +79,10 @@ class Post < Record
   foo = 'bar'
 
   with(fruit: -> { foo }) do |v|
-	  v.with(vegetable: -> { 'bean' }, somecondition: -> { disabled }) do |vv|
-	    validates :someattribute, presence: true, if: -> { getvar(vv[:somecondition]) }
-	  end
-  # validates :someattribute, presence: true, if: -> { self.instance_exec &self.class.instance_variable_get(:@somecondition) }
+    v.with(vegetable: -> { 'bean' }, somecondition: -> { disabled }) do |vv|
+      validates :someattribute, presence: true, if: -> { getvar(vv, :somecondition) }
+    end
+    validates :someattribute, presence: true, if: -> { !getvar(v, :fruit).nil? }
   end
 end
 
