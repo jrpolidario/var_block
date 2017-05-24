@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'var_block'
-  s.version     = '0.0.1'
+  s.version     = '0.0.2'
   s.date        = '2017-05-24'
   s.summary     = 'Allows variable scoping / encapsulation that will be only accessible inside the given block'
   s.description = 'Allows variable scoping / encapsulation that will be only accessible inside the given block. Useful when trying to group up logic through indents.'

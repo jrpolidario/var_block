@@ -1,4 +1,8 @@
-require 'var_block'
+require 'byebug'
+# use installed gem
+# require 'var_block'
+# or use directly the code from lib
+require File.join(__dir__, '..', 'lib', 'var_block.rb')
 
 module Validators
   def validate
@@ -35,10 +39,19 @@ class Post < Record
   # var_block USAGE
 
   with(fruit: -> { foo }) do |v|
-    v.with(vegetable: -> { 'bean' }, somecondition: -> { disabled }) do |vv|
+    v.with(vegetable: 'bean', somecondition: -> { disabled }) do |vv|
       validates :someattribute, presence: true, if: -> { getvar(vv, :somecondition) }
     end
+
     validates :someattribute, presence: true, if: -> { !getvar(v, :fruit).nil? }
+  end
+
+  with(conditions: -> { [disabled, title == 'hahaha'] }) do |v|
+    v.merge(conditions: -> { [true, true] })
+
+    v.with do |v|
+      validates :someattribute, presence: true, if: -> { getvar(v, :conditions, :truthy?) }
+    end
   end
 end
 

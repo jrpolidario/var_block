@@ -1,6 +1,6 @@
 module VarBlock
   class VarHash < Hash
-    include Globals
+    include VarBlock::Globals
 
     def initialize(var_hash: nil)
       if var_hash
@@ -10,8 +10,17 @@ module VarBlock
       self
     end
 
-    def with(variables)
-      super(variables, var_hash: self)
+    def with(variables = {})
+      super(self, variables)
+    end
+
+    def merge(variables)
+      variables.each do |key, value|
+        current_value = self[key]
+
+        self[key] = VarArray.new([current_value]) unless current_value.is_a? VarArray
+        self[key].push(value)
+      end
     end
   end
 end
