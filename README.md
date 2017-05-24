@@ -7,7 +7,7 @@
 
 ## Installation
 * Add the following to your `Gemfile`
-  ```
+  ```ruby
   gem 'var_block'
   ```
 * then run `bundle install`
@@ -15,7 +15,7 @@
 ## Examples
 
 ### Simple
-```
+```ruby
 with(fruit: 'apple') do |v|
   puts getvar(v, :fruit)
   # => apple
@@ -23,7 +23,7 @@ end
 ```
 
 ### Procs
-```
+```ruby
 current_fruit = 'banana'
 
 with(fruit: -> { current_fruit }) do |v|
@@ -33,7 +33,7 @@ end
 ```
 
 ### Nesting
-```
+```ruby
 with(fruit: 'orange') do |v|
   puts getvar(v, :fruit)
   # => orange
@@ -55,7 +55,7 @@ end
 ```
 
 ### Merging
-```
+```ruby
 with(fruits: ['apple', 'banana']) do |v|
   v.merge(fruits: ['grape', 'mango'])
 
@@ -69,7 +69,7 @@ end
 
 ### Options
 #### :truthy?
-```
+```ruby
 with(conditions: -> { [1 == 1, 1.is_a?(Fixnum)] }) do |v|
   v.merge(conditions: -> { [true, true == true, !false] } )
 
@@ -86,7 +86,7 @@ end
 ```
 
 ### Classes & Instances
-```
+```ruby
 class Fruit
   attr_accessor :name, :is_ripe
 
