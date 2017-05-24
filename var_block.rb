@@ -1,50 +1,54 @@
 require 'byebug'
 
-module With
-  def self.included(base)
-    base.extend ClassMethods
-  end
+###############
+##### LIB #####
+###############
 
-  def getvar(triggered_variables, index)
-    instance_exec &triggered_variables[index]
-  end
+module VarBlock
+  module Globals
+    def self.included(base)
+      base.extend self
+    end
 
-  module ClassMethods
-    def with(variables, context: nil)
-      triggered_variables = TriggeredVariables.new(instance: context)
+    def getvar(triggered_variables, index)
+      instance_exec &triggered_variables[index]
+    end
+
+    def with(variables, var_hash: nil)
+      var_hash = VarHash.new(var_hash: var_hash)
 
       variables.each do |key, value|
-        triggered_variables[key] = value
+        var_hash[key] = value
       end
 
-      yield triggered_variables
+      yield var_hash
+    end
+  end
+
+  class VarHash < Hash
+    include Globals
+
+    def initialize(var_hash: nil)
+      if var_hash
+        raise ArgumentError.new('`instance` should be a `TriggeredVariables` object') unless var_hash.is_a? VarHash
+        self.merge!(var_hash)
+      end
+      self
     end
 
-    def getvar(block)
-      instance_exec &block
+    def with(variables)
+      super(variables, var_hash: self)
     end
   end
 end
 
-class TriggeredVariables < Hash
-  include With::ClassMethods
-
-  def initialize(instance: nil)
-    if instance
-      raise '`instance` should be a `TriggeredVariables` object' unless instance.is_a? TriggeredVariables
-      self.merge!(instance)
-    end
-    self
-  end
-
-  def get(context, index)
-    context.instance_exec &self[index]
-  end
-
-  def with(variables)
-    super(variables, context: self)
-  end
+class Object
+  include VarBlock::Globals
 end
+
+################
+##### MISC #####
+################
 
 module Validators
   def validate
@@ -67,7 +71,7 @@ class Record
 end
 
 class Post < Record
-  include With
+  include VarBlock
   attr_accessor :title, :disabled
 
   def initialize(**args)
@@ -78,6 +82,8 @@ class Post < Record
 
   foo = 'bar'
 
+  # USAGE
+  
   with(fruit: -> { foo }) do |v|
     v.with(vegetable: -> { 'bean' }, somecondition: -> { disabled }) do |vv|
       validates :someattribute, presence: true, if: -> { getvar(vv, :somecondition) }
@@ -85,6 +91,10 @@ class Post < Record
     validates :someattribute, presence: true, if: -> { !getvar(v, :fruit).nil? }
   end
 end
+
+#################
+#### EXAMPLE ####
+#################
 
 # This will be validated from code above
 puts '[POST 1]'
