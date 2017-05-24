@@ -5,7 +5,11 @@ module VarBlock
         merged_values = []
 
         value.each do |v|
-          merged_values = merged_values + handle_proc(v, context)
+          if v.is_a? Proc
+            merged_values = merged_values + handle_proc(v, context)
+          else
+            merged_values = merged_values + handle_default(v, context)
+          end
         end
 
         merged_values
