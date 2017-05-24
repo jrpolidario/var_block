@@ -43,6 +43,9 @@ module VarBlock
 end
 
 class Object
+  duplicate_methods = self.instance_methods(false) & VarBlock::Globals.instance_methods(false)
+  raise "#{self} already has methods: #{duplicate_methods}" unless duplicate_methods.empty?
+
   include VarBlock::Globals
 end
 
@@ -83,7 +86,7 @@ class Post < Record
   foo = 'bar'
 
   # USAGE
-  
+
   with(fruit: -> { foo }) do |v|
     v.with(vegetable: -> { 'bean' }, somecondition: -> { disabled }) do |vv|
       validates :someattribute, presence: true, if: -> { getvar(vv, :somecondition) }
