@@ -74,14 +74,14 @@ with(conditions: -> { [1 == 1, 1.is_a?(Fixnum)] }) do |v|
   v.merge(conditions: -> { [true, true == true, !false] } )
 
   puts getvar(v, :conditions, :truthy?)
-  # puts true
+  # true
 end
 
 with(conditions: -> { [1 == 1, 1.is_a?(Fixnum)] }) do |v|
   v.merge(conditions: -> { [false, true == true, true] } )
 
   puts getvar(v, :conditions, :truthy?)
-  # puts false
+  # false
 end
 ```
 
