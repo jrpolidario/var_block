@@ -5,6 +5,13 @@
 * allows variable scoping / encapsulation which will be only accessible inside the given block.
 * block is run in the context outside of it (as if you copy-paste the code from inside to outside the block)
 
+# Installation
+* Add the following to your `Gemfile`
+  ```
+  gem 'var_block'
+  ```
+* then run `bundle install`
+
 # Examples
 
 ## Simple
