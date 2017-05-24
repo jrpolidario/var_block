@@ -1,57 +1,4 @@
-require 'byebug'
-
-###############
-##### LIB #####
-###############
-
-module VarBlock
-  module Globals
-    def self.included(base)
-      base.extend self
-    end
-
-    def getvar(triggered_variables, index)
-      instance_exec &triggered_variables[index]
-    end
-
-    def with(variables, var_hash: nil)
-      var_hash = VarHash.new(var_hash: var_hash)
-
-      variables.each do |key, value|
-        var_hash[key] = value
-      end
-
-      yield var_hash
-    end
-  end
-
-  class VarHash < Hash
-    include Globals
-
-    def initialize(var_hash: nil)
-      if var_hash
-        raise ArgumentError.new('`instance` should be a `TriggeredVariables` object') unless var_hash.is_a? VarHash
-        self.merge!(var_hash)
-      end
-      self
-    end
-
-    def with(variables)
-      super(variables, var_hash: self)
-    end
-  end
-end
-
-class Object
-  duplicate_methods = self.instance_methods(false) & VarBlock::Globals.instance_methods(false)
-  raise "#{self} already has methods: #{duplicate_methods}" unless duplicate_methods.empty?
-
-  include VarBlock::Globals
-end
-
-################
-##### MISC #####
-################
+require 'var_block'
 
 module Validators
   def validate
@@ -85,7 +32,7 @@ class Post < Record
 
   foo = 'bar'
 
-  # USAGE
+  # var_block USAGE
 
   with(fruit: -> { foo }) do |v|
     v.with(vegetable: -> { 'bean' }, somecondition: -> { disabled }) do |vv|
@@ -94,10 +41,6 @@ class Post < Record
     validates :someattribute, presence: true, if: -> { !getvar(v, :fruit).nil? }
   end
 end
-
-#################
-#### EXAMPLE ####
-#################
 
 # This will be validated from code above
 puts '[POST 1]'
