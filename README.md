@@ -136,4 +136,4 @@ fruit.is_inedible?
 ```
 
 ### Motivation
-* I needed to find a way to group model validations in a Rails project because the model has lots of validations and complex "if -> { ... }" conditional logic. Therefore, in hopes to make it readable through indents and explicitly declaration of "conditions" at the start of each block, the code has been a lot more readable and organised though at the expense getting familiar with it.
+* I needed to find a way to group model validations in a Rails project because the model has lots of validations and complex "if -> { ... }" conditional logic. Therefore, in hopes to make it readable through indents and explicit declaration of "conditions" at the start of each block, the code has been a lot more readable and organised though at the expense getting familiar with it.
