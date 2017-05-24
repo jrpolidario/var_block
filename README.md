@@ -1,20 +1,20 @@
 * THIS GEM IS STILL WIP (WORK IN PROGRESS)
 
-# About
+## About
 
 * allows variable scoping / encapsulation which will be only accessible inside the given block.
 * block is run in the context outside of it (as if you copy-paste the code from inside to outside the block)
 
-# Installation
+## Installation
 * Add the following to your `Gemfile`
   ```
   gem 'var_block'
   ```
 * then run `bundle install`
 
-# Examples
+## Examples
 
-## Simple
+### Simple
 ```
 with(fruit: 'apple') do |v|
   puts getvar(v, :fruit)
@@ -22,7 +22,7 @@ with(fruit: 'apple') do |v|
 end
 ```
 
-## Procs
+### Procs
 ```
 current_fruit = 'banana'
 
@@ -32,7 +32,7 @@ with(fruit: -> { current_fruit }) do |v|
 end
 ```
 
-## Nesting
+### Nesting
 ```
 with(fruit: 'orange') do |v|
   puts getvar(v, :fruit)
@@ -54,7 +54,7 @@ with(fruit: 'orange') do |v|
 end
 ```
 
-## Merging
+### Merging
 ```
 with(fruits: ['apple', 'banana']) do |v|
   v.merge(fruits: ['grape', 'mango'])
@@ -67,8 +67,8 @@ with(fruits: ['apple', 'banana']) do |v|
 end
 ```
 
-## Options
-### :truthy?
+### Options
+#### :truthy?
 ```
 with(conditions: -> { [1 == 1, 1.is_a?(Fixnum)] }) do |v|
   v.merge(conditions: -> { [true, true == true, !false] } )
@@ -85,7 +85,7 @@ with(conditions: -> { [1 == 1, 1.is_a?(Fixnum)] }) do |v|
 end
 ```
 
-## Classes & Instances
+### Classes & Instances
 ```
 class Fruit
   attr_accessor :name, :is_ripe
@@ -135,5 +135,5 @@ fruit.is_inedible?
 # => true
 ```
 
-## Motivation
+### Motivation
 * I needed to find a way to group model validations in a Rails project because the model has lots of validations and complex "if -> { ... }" conditional logic. Therefore, in hopes to make it readable through indents and explicitly declaration of "conditions" at the start of each block, the code has been a lot more readable and organised though at the expense getting familiar with it.
