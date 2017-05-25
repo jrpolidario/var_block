@@ -70,7 +70,7 @@ end
 ### Merging
 ```ruby
 with fruits: ['apple', 'banana'] do |v|
-  v.merge(fruits: ['grape', 'mango'])
+  v.merge fruits: ['grape', 'mango']
 
   puts getvar(v, :fruits)
   # => apple
@@ -84,14 +84,14 @@ end
 #### :truthy?
 ```ruby
 with conditions: -> { [1 == 1, 1.is_a?(Fixnum)] } do |v|
-  v.merge(conditions: -> { [true, true == true, !false] } )
+  v.merge conditions: -> { [true, true == true, !false] }
 
   puts getvar(v, :conditions, :truthy?)
   # true
 end
 
 with conditions: -> { [1 == 1, 1.is_a?(Fixnum)] } do |v|
-  v.merge(conditions: -> { [false, true == true, true] } )
+  v.merge conditions: -> { [false, true == true, true] }
 
   puts getvar(v, :conditions, :truthy?)
   # false
