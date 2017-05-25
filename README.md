@@ -157,4 +157,4 @@ fruit.is_inedible?
 
 ### Thanks
 * to `@Jörg W Mittag` for the head start on how to approach to this problem: https://stackoverflow.com/questions/43891007/how-to-define-a-kind-of-block-that-is-used-specifically-for-variable-scoping
-* to `@Jack` for his code snippet that I used to prevent same-named included methods being ignored: https://stackoverflow.com/questions/44156150/how-to-raise-error-when-including-a-module-that-already-has-same-name-methods
+* to `@Jack` for his code snippet that I used to prevent fail-safe when same-named methods are includeed which could potentially break dependencies if ignored : https://stackoverflow.com/questions/44156150/how-to-raise-error-when-including-a-module-that-already-has-same-name-methods
