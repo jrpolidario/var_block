@@ -1,14 +1,18 @@
+require 'var_block/support'
+
 module VarBlock
   module GetvarHandlers
     class << self
+      include VarBlock::Support
+
       def handle_var_array(value, context)
         merged_values = []
 
         value.each do |v|
           if v.is_a? Proc
-            merged_values = merged_values + handle_proc(v, context)
+            merged_values = merged_values + array_wrap(handle_proc(v, context))
           else
-            merged_values = merged_values + handle_default(v, context)
+            merged_values = merged_values + array_wrap(handle_default(v, context))
           end
         end
 
@@ -37,7 +41,7 @@ module VarBlock
         end
 
         return_value
-      end
+      end      
     end
   end
 end

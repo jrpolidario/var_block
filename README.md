@@ -80,6 +80,16 @@ with fruits: ['apple', 'banana'] do |v|
   #    grape
   #    mango
 end
+
+with fruits: ['apple', 'banana'] do |v|
+  v.merge fruits: ['grape', 'mango'] do |v|
+    puts getvar(v, :fruits)
+    # => apple
+    #    banana
+    #    grape
+    #    mango
+  end
+end
 ```
 
 ### Options
