@@ -16,9 +16,22 @@
 
 ### Simple
 ```ruby
-with(fruit: 'apple') do |v|
+with fruit: 'apple' do |v|
   puts getvar(v, :fruit)
   # => apple
+end
+```
+
+### Multiple
+```ruby
+with(
+  fruit: 'apple',
+  vegetable: 'bean'
+) do |v|
+  puts getvar(v, :fruit)
+  # => apple
+  puts getvar(v, :vegetable)
+  # => bean
 end
 ```
 
@@ -26,7 +39,7 @@ end
 ```ruby
 current_fruit = 'banana'
 
-with(fruit: -> { current_fruit }) do |v|
+with fruit: -> { current_fruit } do |v|
   puts getvar(v, :fruit)
   # => banana
 end
@@ -34,18 +47,18 @@ end
 
 ### Nesting
 ```ruby
-with(fruit: 'orange') do |v|
+with fruit: 'orange' do |v|
   puts getvar(v, :fruit)
   # => orange
 
-  v.with(vegetable: 'lettuce') do |v|
+  v.with vegetable: 'lettuce' do |v|
     puts getvar(v, :fruit)
     # => orange
     puts getvar(v, :vegetable)
     # => lettuce
   end
 
-  v.with(vegetable: 'onion') do |v|
+  v.with vegetable: 'onion' do |v|
     puts getvar(v, :fruit)
     # => orange
     puts getvar(v, :vegetable)
@@ -56,7 +69,7 @@ end
 
 ### Merging
 ```ruby
-with(fruits: ['apple', 'banana']) do |v|
+with fruits: ['apple', 'banana'] do |v|
   v.merge(fruits: ['grape', 'mango'])
 
   puts getvar(v, :fruits)
@@ -70,14 +83,14 @@ end
 ### Options
 #### :truthy?
 ```ruby
-with(conditions: -> { [1 == 1, 1.is_a?(Fixnum)] }) do |v|
+with conditions: -> { [1 == 1, 1.is_a?(Fixnum)] } do |v|
   v.merge(conditions: -> { [true, true == true, !false] } )
 
   puts getvar(v, :conditions, :truthy?)
   # true
 end
 
-with(conditions: -> { [1 == 1, 1.is_a?(Fixnum)] }) do |v|
+with conditions: -> { [1 == 1, 1.is_a?(Fixnum)] } do |v|
   v.merge(conditions: -> { [false, true == true, true] } )
 
   puts getvar(v, :conditions, :truthy?)
@@ -105,6 +118,8 @@ class Fruit
     @set_inedible_proc = args[:if]
   end
 
+
+  # usage example
   with(ripe_condition: -> { is_ripe }) do |v|
     set_edible if: -> { getvar(v, :ripe_condition) } 
   end
@@ -112,6 +127,8 @@ class Fruit
   with(unripe_condition: -> { !is_ripe }) do |v|
     set_inedible if: -> { getvar(v, :unripe_condition) }
   end
+
+
 
   def is_edible?
     instance_exec &self.class.instance_variable_get(:@set_edible_proc)
@@ -136,4 +153,8 @@ fruit.is_inedible?
 ```
 
 ### Motivation
-* I needed to find a way to group model validations in a Rails project because the model has lots of validations and complex "if -> { ... }" conditional logic. Therefore, in hopes to make it readable through indents and explicit declaration of "conditions" at the start of each block, I've written this small gem, and the code then has been a lot more readable and organised though at the expense of getting familiar with it.
+* I needed to find a way to group model validations in a Rails project because the model has lots of validations and complex `if -> { ... }` conditional logic. Therefore, in hopes to make it readable through indents and explicit declaration of "conditions" at the start of each block, I've written this small gem, and the code then has been a lot more readable and organised though at the expense of getting familiar with it.
+
+### Thanks
+* to `@Jörg W Mittag` for the head start on how to approach to this problem: https://stackoverflow.com/questions/43891007/how-to-define-a-kind-of-block-that-is-used-specifically-for-variable-scoping
+* to `@Jack` for his code snippet that I used to prevent same-named included methods being ignored: https://stackoverflow.com/questions/44156150/how-to-raise-error-when-including-a-module-that-already-has-same-name-methods
