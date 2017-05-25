@@ -71,6 +71,14 @@ end
 
 ### Merging
 ```ruby
+with fruits: 'apple' do |v|
+  v.merge fruits: 'banana'
+
+  puts getvar(v, :fruits)
+  # => apple
+  #    banana
+end
+
 with fruits: ['apple', 'banana'] do |v|
   v.merge fruits: ['grape', 'mango']
 
@@ -82,13 +90,17 @@ with fruits: ['apple', 'banana'] do |v|
 end
 
 with fruits: ['apple', 'banana'] do |v|
-  v.merge fruits: ['grape', 'mango'] do |v|
+  v.merged_with fruits: ['grape', 'mango'] do |v|
     puts getvar(v, :fruits)
     # => apple
     #    banana
     #    grape
     #    mango
   end
+
+  puts getvar(v, :fruits)
+  # => apple
+  #    banana
 end
 ```
 
