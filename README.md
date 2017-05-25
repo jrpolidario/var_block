@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/jrpolidario/var_block.svg?branch=master)](https://travis-ci.org/jrpolidario/var_block)
+
 * THIS GEM IS STILL WIP (WORK IN PROGRESS), BUT EXAMPLES BELOW ARE ALREADY IMPLEMENTED
 
 ## About
