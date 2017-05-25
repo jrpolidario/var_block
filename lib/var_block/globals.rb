@@ -1,5 +1,7 @@
 module VarBlock
   module Globals
+    
+
     def self.included(base)
       # fail if there is already same-name methods to prevent breaking dependencies
       # thanks to Jack, https://stackoverflow.com/questions/44156150/how-to-raise-error-when-including-a-module-that-already-has-same-name-methods
@@ -40,6 +42,4 @@ module VarBlock
       yield var_hash
     end
   end
-
-  private
 end
