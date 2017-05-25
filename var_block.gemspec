@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.files       = Dir.glob('lib/**/*')
   s.homepage    = 'http://rubygems.org/gems/var_block'
   s.license     = 'MIT'
-  s.required_ruby_version = '>= 1.8.6'
+  s.required_ruby_version = '~> 2.0'
 
   s.add_development_dependency 'rspec', '~> 3.2', '>= 3.2.0'
   s.add_development_dependency 'rake'
