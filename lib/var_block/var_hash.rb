@@ -24,7 +24,11 @@ module VarBlock
 
         # if variable already has a value, we need to wrap both values into a VarArray if not yet a VarArray
         if self.has_key?(key)
-          self[key] = VarArray.new(array_wrap(current_value) + array_wrap(value)) unless current_value.is_a? VarArray
+          unless current_value.is_a? VarArray
+            self[key] = VarArray.new(array_wrap(current_value) + array_wrap(value)) unless current_value.is_a? VarArray
+          else
+            self[key].concat(array_wrap(value))
+          end
           
         # else if new variable
         else

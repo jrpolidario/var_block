@@ -16,6 +16,13 @@ describe VarBlock::VarHash do
         expect(getvar(v, :vegetables)).to eq 'bean'
         expect(getvar(v, :trees)).to eq 'oak'
       end
+
+      with fruits: 'apple' do |v|
+        v.merge fruits: 'banana'
+        v.merged_with fruits: ['grape', 'mango'] do |v|
+          expect(getvar(v, :fruits)).to eq %w[apple banana grape mango]
+        end
+      end
     end
   end
 
