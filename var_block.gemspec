@@ -16,5 +16,6 @@ Gem::Specification.new do |s|
   s.required_ruby_version = '~> 2.0'
 
   s.add_development_dependency 'rspec', '~> 3.2', '>= 3.2.0'
-  s.add_development_dependency 'rake'
+  s.add_development_dependency 'rake', '~> 12.0' # TODO: check compatibility with older versions
+  s.add_development_dependency 'byebug', '~> 9.0'  # TODO: check compatibility with older versions
 end
