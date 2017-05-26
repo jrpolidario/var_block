@@ -19,6 +19,8 @@ module VarBlock
     end
 
     def merge(variables)
+      raise ArgumentError, '`merge` does not accept a block. Are you looking for `merged_with` instead?' if block_given?
+      
       variables.each do |key, value|
         current_value = self[key]
 

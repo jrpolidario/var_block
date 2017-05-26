@@ -24,6 +24,14 @@ describe VarBlock::VarHash do
         end
       end
     end
+
+    it 'cannot accept a block; merged_with is the one that accepts a block' do
+      with fruits: 'apple' do |v|
+        expect{
+          v.merge(fruits: 'banana') { |v| }
+        }.to raise_error ArgumentError, '`merge` does not accept a block. Are you looking for `merged_with` instead?'
+      end
+    end
   end
 
   describe 'merged_with' do

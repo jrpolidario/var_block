@@ -75,6 +75,16 @@ with fruit: 'orange' do |v|
 end
 ```
 
+### Overriding
+```
+with fruit: 'orange' do |v|
+  v.with fruit: 'banana' do |v|
+    puts getvar(v, :fruit)
+    # => banana
+  end
+end
+```
+
 ### Merging
 ```ruby
 with fruits: 'apple' do |v|
@@ -113,18 +123,43 @@ end
 ### Options
 #### :truthy?
 ```ruby
-with conditions: -> { [1 == 1, 1.is_a?(Fixnum)] } do |v|
-  v.merge conditions: -> { [true, true == true, !false] }
+with conditions: (1 == 1 && 1.is_a?(Fixnum)) do |v|
+  v.merge conditions: !false
 
   puts getvar(v, :conditions, :truthy?)
   # true
 end
 
-with conditions: -> { [1 == 1, 1.is_a?(Fixnum)] } do |v|
-  v.merge conditions: -> { [false, true == true, true] }
+with conditions: (1 == 1 && 1.is_a?(String)) do |v|
+  v.merge conditions: !false
 
   puts getvar(v, :conditions, :truthy?)
   # false
+end
+
+
+condition1 = true
+condition2 = true
+condition3 = false
+condition4 = true
+
+with conditions: -> { condition1 } do |v|
+
+  v.merged_with conditions: -> { condition2 } do |v|
+    puts getvar(v, :conditions, :truthy?)
+    # => true
+  end
+
+  v.merged_with conditions: -> { condition3 } do |v|
+    puts getvar(v, :conditions, :truthy?)
+    # => false
+
+    v.merged_with conditions: -> { condition4 } do |v|
+      # returns false because condition3 above is already false. This will not propagate and therefore would not run the proc above for condition4
+      puts getvar(v, :conditions, :truthy?)
+      # => false
+    end
+  end
 end
 ```
 

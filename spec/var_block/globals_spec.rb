@@ -2,6 +2,14 @@ require 'spec_helper'
 
 describe VarBlock::Globals do
   describe 'getvar' do
+    context 'when "variable" is not defined' do
+      it 'raises an error' do
+        with fruit: 'apple' do |v|
+          expect{getvar(v, :vegetable)}.to raise_error ArgumentError, '2nd argument :vegetable is not defined. Defined are :fruit'
+        end
+      end
+    end
+
     context 'when defined "variable" is generic (non-proc)' do
       it 'returns the value itself' do
         with fruit: 'apple' do |v|
@@ -63,30 +71,49 @@ describe VarBlock::Globals do
 
     context 'when defined "variable" is an Array or Proc->VarArray, and :truthy? option is passed' do
       it 'returns true if all items in the array are "truthy"' do
-        with conditions: [true, 1 == 1, 'foobar'.is_a?(String)] do |v|
-          expect(getvar(v, :conditions, :truthy?)).to be true
+        with conditions: true && 1 == 1 do |v|
+          v.merged_with conditions: 'foobar'.is_a?(String) do |v|
+            expect(getvar(v, :conditions, :truthy?)).to be true
+          end
         end
 
         condition1 = true
         condition2 = 1 == 1
         condition3 = 'foobar'.is_a?(String)
 
-        with conditions: -> { [condition1, condition2, condition3] } do |v|
-          expect(getvar(v, :conditions, :truthy?)).to be true
+        with conditions: -> { condition1 && condition2 } do |v|
+          v.merged_with conditions: -> { condition3 } do |v|
+            expect(getvar(v, :conditions, :truthy?)).to be true
+          end
         end
       end
 
       it 'returns false if at least one item is not "truthy"' do
-        with conditions: [true, 1 == 2, 'foobar'.is_a?(String)] do |v|
-          expect(getvar(v, :conditions, :truthy?)).to be false
+        with conditions: true && 1 == 2 do |v|
+          v.merged_with conditions: 'foobar'.is_a?(String) do |v|
+            expect(getvar(v, :conditions, :truthy?)).to be false
+          end
         end
 
         condition1 = true
         condition2 = 1 == 2
         condition3 = 'foobar'.is_a?(String)
 
-        with conditions: -> { [condition1, condition2, condition3] } do |v|
-          expect(getvar(v, :conditions, :truthy?)).to be false
+        with conditions: -> { condition1 && condition2 } do |v|
+          v.merged_with conditions: -> { condition3 } do |v|
+            expect(getvar(v, :conditions, :truthy?)).to be false
+          end
+        end
+      end
+
+      it 'returns false immediately and not propagate/check remaining items in the list if at least one item is already not "truthy"' do
+        with conditions: -> { true } do |v|
+          v.merged_with conditions: -> { 1 == 2 } do |v|
+            v.merged_with conditions: -> { raise('SOME ERROR') } do |v|
+              expect{getvar(v, :conditions, :truthy?)}.to_not raise_error
+              expect(getvar(v, :conditions, :truthy?)).to be false
+            end
+          end
         end
       end
     end
