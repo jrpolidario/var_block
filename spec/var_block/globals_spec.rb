@@ -105,7 +105,7 @@ describe VarBlock::Globals do
     it 'evaluates the block in the current context' do
       current_context = self
 
-      with do |_v|
+      with do |v|
         expect(self).to eq current_context
       end
     end
