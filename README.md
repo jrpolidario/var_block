@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/jrpolidario/var_block.svg?branch=master)](https://travis-ci.org/jrpolidario/var_block)
 [![Gem Version](https://badge.fury.io/rb/var_block.svg)](https://badge.fury.io/rb/var_block)
+[![Code Climate](https://codeclimate.com/github/codeclimate/codeclimate/badges/gpa.svg)](https://codeclimate.com/github/jrpolidario/var_block)
 
 * THIS GEM IS STILL WIP (WORK IN PROGRESS), BUT EXAMPLES BELOW ARE ALREADY IMPLEMENTED
 
