@@ -76,7 +76,7 @@ end
 ```
 
 ### Overriding
-```
+```ruby
 with fruit: 'orange' do |v|
   v.with fruit: 'banana' do |v|
     puts getvar(v, :fruit)
