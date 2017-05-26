@@ -12,7 +12,7 @@ module VarBlock
           if v.is_a? Proc
             merged_values = merged_values + array_wrap(handle_proc(v, context))
           else
-            merged_values = merged_values + array_wrap(handle_default(v, context))
+            merged_values = merged_values + array_wrap(handle_default(v))
           end
         end
 
@@ -20,14 +20,14 @@ module VarBlock
       end
 
       def handle_proc(value, context)
-        context.instance_exec &value
+        context.instance_exec(&value)
       end
 
-      def handle_default(value, context)
+      def handle_default(value)
         value
       end
 
-      def handle_options(value, context, options)
+      def handle_options(value, options)
         return_value = value
 
         options.each do |option|

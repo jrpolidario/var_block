@@ -20,11 +20,11 @@ module VarBlock
                      when Proc
                        VarBlock::GetvarHandlers.handle_proc(value, self)
                      else
-                       VarBlock::GetvarHandlers.handle_default(value, self)
+                       VarBlock::GetvarHandlers.handle_default(value)
                      end
 
       unless options.empty?
-        return_value = VarBlock::GetvarHandlers.handle_options(return_value, self, options)
+        return_value = VarBlock::GetvarHandlers.handle_options(return_value, options)
       end
 
       return_value
