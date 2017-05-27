@@ -6,7 +6,44 @@ describe VarBlock::VarHash do
     expect(var_hash).to be_a Hash
   end
 
-  pending 'with'
+  describe 'with' do
+    it 'stores the variables arguments as a VarHash which is then passed into the block as the argument' do
+      with var1: '1' do |v|
+        v.with var2: 2 do |v|
+          expect(v).to be_a VarBlock::VarHash
+          expect(v[:var2]).to eq 2
+        end
+      end
+    end
+
+    it 'evaluates the block in the current context' do
+      current_context = self
+
+      with do |v|
+        expect(self).to eq current_context
+      end
+    end
+
+    it 'merges with the parent VarHash' do
+      with var1: '1' do |v|
+        v.with var2: 2 do |v|
+          expect(v).to be_a VarBlock::VarHash
+          expect(v[:var1]).to eq '1'
+          expect(v[:var2]).to eq 2
+        end
+      end
+    end
+
+    it 'overrides the parent VarHash when "variables" already defined' do
+      with var1: 1, var2: 2, var3: nil do |v|
+        v.with var1: 'a', var2: 'b' do |v|
+          expect(v[:var1]).to eq 'a'
+          expect(v[:var2]).to eq 'b'
+          expect(v[:var3]).to eq nil
+        end
+      end
+    end
+  end
 
   describe 'merge' do
     it 'merges the variable arguments with the current VarHash object, and wraps same-name variables into an Array if not yet an Array' do
@@ -22,6 +59,14 @@ describe VarBlock::VarHash do
         v.merged_with fruits: ['grape', 'mango'] do |v|
           expect(getvar(v, :fruits)).to eq %w[apple banana grape mango]
         end
+      end
+    end
+
+    it 'merges the variable arguments with the current VarHash object as a VarArray object' do
+      with fruits: 'apple' do |v|
+        v.merge fruits: 'banana'
+        expect(v[:fruits].class).to eq VarBlock::VarArray
+        expect(getvar(v, :fruits).class).to eq Array
       end
     end
 
