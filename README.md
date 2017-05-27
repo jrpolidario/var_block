@@ -104,6 +104,7 @@ with fruits: ['apple', 'banana'] do |v|
   #    grape
   #    mango
 end
+```
 
 ```ruby
 with fruits: ['apple', 'banana'] do |v|
