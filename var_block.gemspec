@@ -5,7 +5,7 @@ require 'var_block/version'
 Gem::Specification.new do |s|
   s.name        = 'var_block'
   s.version     = VarBlock::VERSION
-  s.date        = '2017-05-24'
+  s.date        = '2017-05-27'
   s.summary     = 'DSL for variable scoping / encapsulation for readability and organisation, by means of block indents and explicit variable declarations'
   s.description = 'DSL for variable scoping / encapsulation for readability and organisation, by means of block indents and explicit variable declarations. Useful when organising complex conditions such as procs (case-in-point: complex `... if: -> {}` Rails model validations'
   s.authors     = ['Jules Roman B. Polidario']
