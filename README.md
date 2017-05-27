@@ -10,7 +10,7 @@
 ## Setup
 * Add the following to your `Gemfile`
   ```ruby
-  gem 'var_block'
+  gem 'var_block', '~> 1.0.0'
   ```
 * then run `bundle install`
 * to use:
