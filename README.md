@@ -230,17 +230,17 @@ condition4 = false
 with conditions: -> { condition1 } do |v|
 
   v.merged_with conditions: -> { condition2 } do |v|
-    puts getvar(v, :conditions, :truthy?)
+    puts getvar(v, :conditions, :any?)
     # => false
   end
 
   v.merged_with conditions: -> { condition3 } do |v|
-    puts getvar(v, :conditions, :truthy?)
+    puts getvar(v, :conditions, :any?)
     # => true
 
     v.merged_with conditions: -> { condition4 } do |v|
       # returns true because condition3 above is already true. This will not propagate and therefore would not run the proc above for condition4
-      puts getvar(v, :conditions, :truthy?)
+      puts getvar(v, :conditions, :any?)
       # => true
     end
   end
