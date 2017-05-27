@@ -117,6 +117,79 @@ describe VarBlock::Globals do
         end
       end
     end
+
+    context 'when defined "variable" is an Array or Proc->VarArray, and :any? option is passed' do
+      it 'returns true if at least one item in the array is "truthy"' do
+        with conditions: true do |v|
+          expect(getvar(v, :conditions, :any?)).to be true
+        end
+
+        with conditions: false do |v|
+          expect(getvar(v, :conditions, :any?)).to be false
+        end
+
+        with conditions: false do |v|
+          v.merged_with conditions: false do |v|
+            expect(getvar(v, :conditions, :any?)).to be false
+          end
+        end
+
+        with conditions: false do |v|
+          v.merged_with conditions: true do |v|
+            expect(getvar(v, :conditions, :any?)).to be true
+          end
+        end
+
+        condition1 = false
+        condition2 = 1 == 2
+        condition3 = 'foobar'.is_a?(String)
+
+        with conditions: -> { condition1 && condition2 } do |v|
+          v.merged_with conditions: -> { condition3 } do |v|
+            expect(getvar(v, :conditions, :any?)).to be true
+          end
+        end
+
+        condition1 = false
+        condition2 = 1 == 2
+        condition3 = 'foobar'.is_a?(Integer)
+
+        with conditions: -> { condition1 && condition2 } do |v|
+          v.merged_with conditions: -> { condition3 } do |v|
+            expect(getvar(v, :conditions, :any?)).to be false
+          end
+        end
+      end
+
+      it 'returns false if all items are not "truthy"' do
+        with conditions: false do |v|
+          v.merged_with conditions: true do |v|
+            expect(getvar(v, :conditions, :any?)).to be true
+          end
+        end
+
+        condition1 = true
+        condition2 = 1 == 2
+        condition3 = 'foobar'.is_a?(String)
+
+        with conditions: -> { condition1 && condition2 } do |v|
+          v.merged_with conditions: -> { condition3 } do |v|
+            expect(getvar(v, :conditions, :truthy?)).to be false
+          end
+        end
+      end
+
+      it 'returns true immediately and not propagate/check remaining items in the list if at least one item is already "truthy"' do
+        with conditions: -> { false } do |v|
+          v.merged_with conditions: -> { true } do |v|
+            v.merged_with conditions: -> { raise('SOME ERROR') } do |v|
+              expect{getvar(v, :conditions, :any?)}.to_not raise_error
+              expect(getvar(v, :conditions, :any?)).to be true
+            end
+          end
+        end
+      end
+    end
   end
 
   describe 'with' do

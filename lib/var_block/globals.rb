@@ -31,8 +31,8 @@ module VarBlock
       return_value
     end
 
-    def with(var_hash = nil, **variables)
-      var_hash = VarHash.new(var_hash: var_hash)
+    def with(var_hash_parent = nil, **variables)
+      var_hash = VarHash.new(var_hash: var_hash_parent)
 
       variables.each do |key, value|
         var_hash[key] = value

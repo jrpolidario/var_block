@@ -22,7 +22,7 @@
 
 ## Examples
 
-### Simple
+### Basic
 ```ruby
 with fruit: 'apple' do |v|
   puts getvar(v, :fruit)
@@ -120,17 +120,50 @@ with fruits: ['apple', 'banana'] do |v|
 end
 ```
 
+### DSL Explanation
+```ruby
+with(
+  fruit: 'apple',
+  vegetable: -> { 'bean' }
+) do |v|
+  puts v.class
+  # => VarBlock::VarHash
+  puts v.is_a? Hash
+  # => true
+
+  # from above, notice that a VarHash extends a Hash
+  # therefore you can also use any Hash method as well (only except `merge`) like below.
+
+  # NOT RECOMMENDED. use `getvar(v, :fruit)` instead when getting the value as it automatically evaluates the value amongst others things
+  puts v[:fruit]
+  # => 'apple'
+  puts getvar(v, :fruit)
+  # => 'apple'
+  puts v[:vegetable]
+  # => #<Proc:0x00...>
+  puts getvar(v, :vegetable)
+  # => 'bean'
+
+  # NOT RECOMMENDED. use `v.with(fruit: 'banana')` block instead when overwriting the value, as encapsulation is the main purpose of this gem
+  v[:fruit] = 'banana'
+  v.with(fruit: 'banana') do
+    # ...
+  end
+end
+```
+
 ### Options
 #### :truthy?
+* mimics "AND" logical operator for merged variables
 ```ruby
-with conditions: (1 == 1 && 1.is_a?(Fixnum)) do |v|
+with conditions: 1.is_a?(Integer) do |v|
   v.merge conditions: !false
 
   puts getvar(v, :conditions, :truthy?)
   # true
 end
 
-with conditions: (1 == 1 && 1.is_a?(String)) do |v|
+with conditions: 1.is_a?(String) do |v|
   v.merge conditions: !false
 
   puts getvar(v, :conditions, :truthy?)
@@ -158,6 +191,49 @@ with conditions: -> { condition1 } do |v|
       # returns false because condition3 above is already false. This will not propagate and therefore would not run the proc above for condition4
       puts getvar(v, :conditions, :truthy?)
       # => false
+    end
+  end
+end
+```
+
+#### :any?
+* mimics "OR" logical operator for merged variables
+```ruby
+with conditions: 1.is_a?(Integer) do |v|
+  v.merge conditions: false
+
+  puts getvar(v, :conditions, :any?)
+  # true
+end
+
+with conditions: 1.is_a?(String) do |v|
+  v.merge conditions: false
+
+  puts getvar(v, :conditions, :any?)
+  # false
+end
+
+
+condition1 = false
+condition2 = false
+condition3 = true
+condition4 = false
+
+with conditions: -> { condition1 } do |v|
+
+  v.merged_with conditions: -> { condition2 } do |v|
+    puts getvar(v, :conditions, :truthy?)
+    # => false
+  end
+
+  v.merged_with conditions: -> { condition3 } do |v|
+    puts getvar(v, :conditions, :truthy?)
+    # => true
+
+    v.merged_with conditions: -> { condition4 } do |v|
+      # returns true because condition3 above is already true. This will not propagate and therefore would not run the proc above for condition4
+      puts getvar(v, :conditions, :truthy?)
+      # => true
     end
   end
 end
@@ -222,6 +298,9 @@ fruit.is_inedible?
 
 ## TODOs
 * pass in also the `binding` of the current context where `getvar` is called into the variable-procs so that the procs are executed with the same `binding` (local variables exactly the same) as the caller context. Found [dynamic_binding](https://github.com/niklasb/ruby-dynamic-binding), but I couldn't think of a way to skip passing in `binding` as an argument to `getvar` in hopes to make `getvar` as short as possible
+
+## Contributing
+* pull requests and forks are very much welcomed! :) Let me know if you find any bug! Thanks
 
 ## Thanks
 * to `@Jörg W Mittag` for the head start on how to approach to this problem: https://stackoverflow.com/questions/43891007/how-to-define-a-kind-of-block-that-is-used-specifically-for-variable-scoping
