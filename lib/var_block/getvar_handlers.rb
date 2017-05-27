@@ -11,7 +11,7 @@ module VarBlock
       def handle_var_array(value, context, options)
         # if :truthy?, we need to check each item in the array, and return false immediately if at least one is found to be not "truthy", else return true
         if options.any? 
-          return handle_options(value, context, options)
+          return handle_options(value, options)
 
         # else, if no options, defaults to return as a wrapped Array
         else
@@ -39,7 +39,7 @@ module VarBlock
 
       private
 
-      def handle_options(value, context, options)
+      def handle_options(value, options)
         options.each do |option|
           case option
 
