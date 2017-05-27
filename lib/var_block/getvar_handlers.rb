@@ -44,32 +44,40 @@ module VarBlock
           case option
 
           when :truthy?
-            is_truthy = true
-
-            value.each do |v|
-              if v.is_a? Proc
-                is_truthy = handle_proc(v, context)
-              else
-                is_truthy = handle_default(v)
-              end
-              break unless is_truthy
-            end
-
-            return is_truthy
+            return handle_option_truthy(value)
 
           when :any?
-            value.each do |v|
-              if v.is_a? Proc
-                is_truthy = handle_proc(v, context)
-              else
-                is_truthy = handle_default(v)
-              end
-              return true if is_truthy
-            end
-
-            return false
+            return handle_option_any(value)
           end
         end
+      end
+
+      def handle_option_truthy(values)
+        is_truthy = true
+
+        values.each do |value|
+          if value.is_a? Proc
+            is_truthy = handle_proc(value, context)
+          else
+            is_truthy = handle_default(value)
+          end
+          break unless is_truthy
+        end
+
+        return is_truthy
+      end
+
+      def handle_option_any(values)
+        values.each do |value|
+          if value.is_a? Proc
+            is_truthy = handle_proc(value, context)
+          else
+            is_truthy = handle_default(value)
+          end
+          return true if is_truthy
+        end
+
+        return false
       end
     end
   end
