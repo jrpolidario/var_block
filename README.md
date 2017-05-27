@@ -292,7 +292,7 @@ fruit.is_inedible?
 ```
 
 ### Advanced
-```
+```ruby
 with fruit: 'apple' do |v|
   v.with fruit: 'banana' do |vv|
     vv.with fruit: 'grape' do |vvv|
