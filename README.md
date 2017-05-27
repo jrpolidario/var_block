@@ -92,7 +92,9 @@ with fruits: 'apple' do |v|
   # => apple
   #    banana
 end
+```
 
+```ruby
 with fruits: ['apple', 'banana'] do |v|
   v.merge fruits: ['grape', 'mango']
 
@@ -103,6 +105,7 @@ with fruits: ['apple', 'banana'] do |v|
   #    mango
 end
 
+```ruby
 with fruits: ['apple', 'banana'] do |v|
   v.merged_with fruits: ['grape', 'mango'] do |v|
     puts getvar(v, :fruits)
@@ -160,15 +163,18 @@ with conditions: 1.is_a?(Integer) do |v|
   puts getvar(v, :conditions, :truthy?)
   # => true
 end
+```
 
+```ruby
 with conditions: 1.is_a?(String) do |v|
   v.merge conditions: !false
 
   puts getvar(v, :conditions, :truthy?)
   # => false
 end
+```
 
-
+```ruby
 condition1 = true
 condition2 = true
 condition3 = false
@@ -203,15 +209,18 @@ with conditions: 1.is_a?(Integer) do |v|
   puts getvar(v, :conditions, :any?)
   # => true
 end
+```
 
+```ruby
 with conditions: 1.is_a?(String) do |v|
   v.merge conditions: false
 
   puts getvar(v, :conditions, :any?)
   # => false
 end
+```
 
-
+```ruby
 condition1 = false
 condition2 = false
 condition3 = true
@@ -292,12 +301,12 @@ fruit.is_inedible?
 ```
 
 ### Advanced
+* you can specify a "scope"
 ```ruby
 with fruit: 'apple' do |v|
   v.with fruit: 'banana' do |vv|
     vv.with fruit: 'grape' do |vvv|
       vvv.with fruit: 'mango' do |vvvv|
-        # you can specify a "scope"
         puts getvar(v, :fruit)
         # => apple
         puts getvar(vv, :fruit)
@@ -310,8 +319,10 @@ with fruit: 'apple' do |v|
     end
   end
 end
+```
 
-# you can also store the variables, and use them for later use:
+* you can also store the variables, and use them for later use:
+```ruby
 my_variables = nil
 
 with fruits: 'apple' do |v|
