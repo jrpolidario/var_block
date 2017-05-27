@@ -134,7 +134,7 @@ with(
   # from above, notice that a VarHash extends a Hash
   # therefore you can also use any Hash method as well (only except `merge`) like below.
 
-  # NOT RECOMMENDED. use `getvar(v, :fruit)` instead when getting the value as it automatically evaluates the value amongst others things
+  # NOT RECOMMENDED. use `getvar(v, :fruit)` instead when getting the value as it automatically evaluates the value, amongst others things
   puts v[:fruit]
   # => 'apple'
   puts getvar(v, :fruit)
