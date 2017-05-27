@@ -2,11 +2,9 @@
 [![Gem Version](https://badge.fury.io/rb/var_block.svg)](https://badge.fury.io/rb/var_block)
 [![Code Climate](https://codeclimate.com/github/codeclimate/codeclimate/badges/gpa.svg)](https://codeclimate.com/github/jrpolidario/var_block)
 
-* THIS GEM IS STILL WIP (WORK IN PROGRESS), BUT EXAMPLES BELOW ARE ALREADY IMPLEMENTED
-
 ## About
 
-* allows variable scoping / encapsulation which will be only accessible inside the given block.
+* DSL for variable scoping / encapsulation for readability and organisation, by means of block indents and explicit variable declarations
 * block is run in the context outside of it (as if you copy-paste the code from inside to outside the block)
 
 ## Setup
