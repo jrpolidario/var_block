@@ -158,14 +158,14 @@ with conditions: 1.is_a?(Integer) do |v|
   v.merge conditions: !false
 
   puts getvar(v, :conditions, :truthy?)
-  # true
+  # => true
 end
 
 with conditions: 1.is_a?(String) do |v|
   v.merge conditions: !false
 
   puts getvar(v, :conditions, :truthy?)
-  # false
+  # => false
 end
 
 
@@ -201,14 +201,14 @@ with conditions: 1.is_a?(Integer) do |v|
   v.merge conditions: false
 
   puts getvar(v, :conditions, :any?)
-  # true
+  # => true
 end
 
 with conditions: 1.is_a?(String) do |v|
   v.merge conditions: false
 
   puts getvar(v, :conditions, :any?)
-  # false
+  # => false
 end
 
 
@@ -289,6 +289,44 @@ fruit.is_edible?
 # => false
 fruit.is_inedible?
 # => true
+```
+
+### Advanced
+```
+with fruit: 'apple' do |v|
+  v.with fruit: 'banana' do |vv|
+    vv.with fruit: 'grape' do |vvv|
+      vvv.with fruit: 'mango' do |vvvv|
+        # you can specify a "scope"
+        puts getvar(v, :fruit)
+        # => apple
+        puts getvar(vv, :fruit)
+        # => banana
+        puts getvar(vvv, :fruit)
+        # => grape
+        puts getvar(vvvv, :fruit)
+        # => mango
+      end
+    end
+  end
+end
+
+# you can also store the variables, and use them for later use:
+my_variables = nil
+
+with fruits: 'apple' do |v|
+  v.merged_with fruits: 'banana' do |v|
+    my_variables = v
+  end
+end
+
+my_variables.merged_with fruits: ['grape', 'mango'] do |v|
+  puts getvar(v, :fruits)
+  # => apple
+  #    banana
+  #    grape
+  #    mango
+end
 ```
 
 ## Motivation
