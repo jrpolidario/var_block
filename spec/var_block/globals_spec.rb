@@ -282,6 +282,14 @@ describe VarBlock::Globals do
         end
       end
     end
+
+    context 'when an unsupported option is passed' do
+      it 'raises an ArgumentError' do
+        with fruit: -> { 'apple' } do |v|
+          expect{getvar(v, :conditions, :somenonexistingoption)}.to raise_error(ArgumentError, '3rd argument options Array only supports [:truthy?, :any?]. Does not support :somenonexistingoption')
+        end
+      end
+    end
   end
 
   describe 'with' do

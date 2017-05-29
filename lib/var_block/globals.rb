@@ -13,7 +13,7 @@ module VarBlock
 
     def getvar(var_hash, index, *options)
       unsupported_options = (options - VarBlock::GetvarHandlers::OPTIONS)
-      raise ArgumentError, "3rd argument options Array only supports #{VarBlock::GetvarHandlers::SUPPORTED_OPTIONS}. Does not support #{unsupported_options.map(&:inspect).join(', ')}" if unsupported_options.any?
+      raise ArgumentError, "3rd argument options Array only supports #{VarBlock::GetvarHandlers::OPTIONS}. Does not support #{unsupported_options.map(&:inspect).join(', ')}" if unsupported_options.any?
       raise ArgumentError, "1st argument should be a VarHash object, but is found to be a #{var_hash.class}" unless var_hash.is_a? VarHash
       raise ArgumentError, "2nd argument :#{index} is not defined. Defined are #{var_hash.keys.map(&:inspect).join(', ')}" unless var_hash.keys.include?(index)
 
