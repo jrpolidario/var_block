@@ -84,6 +84,7 @@ end
 ```
 
 ### Merging
+* will wrap into an Array if not yet an Array
 ```ruby
 with fruits: 'apple' do |v|
   v.merge fruits: 'banana'
@@ -94,6 +95,7 @@ with fruits: 'apple' do |v|
 end
 ```
 
+* will concatenate with the Array if already an Array
 ```ruby
 with fruits: ['apple', 'banana'] do |v|
   v.merge fruits: ['grape', 'mango']
@@ -106,6 +108,7 @@ with fruits: ['apple', 'banana'] do |v|
 end
 ```
 
+* `merged_with` is just basically `merge + with` that accepts a block
 ```ruby
 with fruits: ['apple', 'banana'] do |v|
   v.merged_with fruits: ['grape', 'mango'] do |v|
@@ -322,7 +325,7 @@ with fruit: 'apple' do |v|
 end
 ```
 
-* you can also store the variables, and use them for later use:
+* you can also store the variables for later use:
 ```ruby
 my_variables = nil
 
