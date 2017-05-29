@@ -350,15 +350,15 @@ class Post < ApplicationRecord
   # let Post have attributes:
   #   title:string
   #   content:text
-  #   type:integer
+  #   category:integer
   #   publish_at:datetime
 
-  TYPE_GENERAL = 1
-  TYPE_PRIORITY = 2
+  CATEGORY_GENERAL = 1
+  CATEGORY_PRIORITY = 2
 
   with conditions: [] do |v|
 
-    v.merged_with conditions: -> { type == TYPE_GENERAL } do |v|
+    v.merged_with conditions: -> { category == CATEGORY_GENERAL } do |v|
 
       validates :publish_at, presence: true, if: -> { getvar(v, :conditions, :truthy?) }
 
@@ -375,7 +375,7 @@ class Post < ApplicationRecord
       end
     end
 
-    v.merged_with conditions: -> { type == TYPE_PRIORITY } do |v|
+    v.merged_with conditions: -> { category == CATEGORY_PRIORITY } do |v|
 
       validates :title, :content, presence: true, if: -> { getvar(v, :conditions, :truthy?) }
       validates :title, length: { maximum: 64 }, if: -> { getvar(v, :conditions, :truthy?) }
