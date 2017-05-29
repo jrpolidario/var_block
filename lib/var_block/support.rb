@@ -1,6 +1,6 @@
 module VarBlock
-	module Support
-		# copied directly from Rails Array class
+  module Support
+    # copied directly from Rails Array class
     # https://apidock.com/rails/v4.2.7/Array/wrap/class
     def array_wrap(object)
       if object.nil?
@@ -11,5 +11,5 @@ module VarBlock
         [object]
       end
     end
-	end
+  end
 end
