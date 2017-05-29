@@ -32,7 +32,7 @@ module VarBlock
     end
 
     def with(var_hash_parent = nil, **variables)
-      var_hash = VarHash.new(var_hash: var_hash_parent)
+      var_hash = VarHash.new_from_var_hash(var_hash: var_hash_parent)
 
       variables.each do |key, value|
         var_hash[key] = value

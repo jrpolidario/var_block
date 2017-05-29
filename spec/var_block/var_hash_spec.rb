@@ -87,5 +87,23 @@ describe VarBlock::VarHash do
         end
       end
     end
+
+    it 'does not affect the values of parent VarHash objects' do
+      with fruits: 'apple' do |v|
+        v.merged_with fruits: 'banana' do |vv|
+        end
+
+        expect(getvar(v, :fruits)).to eq 'apple'
+      end
+
+      with conditions: [] do |v|
+        v.merged_with conditions: -> { true } do |vv|
+          vv.merged_with conditions: -> { false } do |vvv|
+          end
+
+          expect(getvar(vv, :conditions)).to eq [true]
+        end
+      end
+    end
   end
 end
