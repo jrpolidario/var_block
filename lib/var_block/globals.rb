@@ -12,7 +12,7 @@ module VarBlock
     end
 
     def getvar(var_hash, index, *options)
-      unsupported_options = (options - VarBlock::GetvarHandlers::SUPPORTED_OPTIONS)
+      unsupported_options = (options - VarBlock::GetvarHandlers::OPTIONS)
       raise ArgumentError, "3rd argument options Array only supports #{VarBlock::GetvarHandlers::SUPPORTED_OPTIONS}. Does not support #{unsupported_options.map(&:inspect).join(', ')}" if unsupported_options.any?
       raise ArgumentError, "1st argument should be a VarHash object, but is found to be a #{var_hash.class}" unless var_hash.is_a? VarHash
       raise ArgumentError, "2nd argument :#{index} is not defined. Defined are #{var_hash.keys.map(&:inspect).join(', ')}" unless var_hash.keys.include?(index)
@@ -21,11 +21,11 @@ module VarBlock
 
       return_value = case value
                      when VarArray
-                       VarBlock::GetvarHandlers.handle_var_array(value, self, options)
+                       VarBlock::GetvarHandlers::VarArrayHandler.handle(value, self, options)
                      when Proc
-                       VarBlock::GetvarHandlers.handle_proc(value, self)
+                       VarBlock::GetvarHandlers::ProcHandler.handle(value, self, options)
                      else
-                       VarBlock::GetvarHandlers.handle_default(value)
+                       VarBlock::GetvarHandlers::DefaultHandler.handle(value, options)
                      end
 
       return_value
