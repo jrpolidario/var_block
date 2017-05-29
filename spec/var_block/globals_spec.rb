@@ -117,7 +117,7 @@ describe VarBlock::Globals do
         end
       end
 
-      it 'returns true of false only even if the variables are non-boolean' do
+      it 'returns true or false only even if the variables are non-boolean' do
         fruit1 = 'apple'
         with conditions: -> { true } do |v|
           v.merged_with conditions: -> { fruit1 } do |v|
@@ -232,7 +232,7 @@ describe VarBlock::Globals do
         end
       end
 
-      it 'returns true of false only even if the variables are non-boolean' do
+      it 'returns true or false only even if the variables are non-boolean' do
         fruit1 = 'apple'
         with conditions: -> { false } do |v|
           v.merged_with conditions: -> { fruit1 } do |v|
