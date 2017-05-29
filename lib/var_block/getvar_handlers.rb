@@ -29,7 +29,7 @@ module VarBlock
 
         def handle(value, context, options)
           if options.any? 
-            return handle_options(value, options)
+            return handle_options(value, context, options)
 
           # else, if no options, defaults to return as a wrapped Array
           else
@@ -49,20 +49,20 @@ module VarBlock
 
         private
 
-        def handle_options(value, options)
+        def handle_options(value, context, options)
           options.each do |option|
             case option
 
             when :truthy?
-              return handle_option_truthy(value)
+              return handle_option_truthy(value, context)
 
             when :any?
-              return handle_option_any(value)
+              return handle_option_any(value, context)
             end
           end
         end
 
-        def handle_option_truthy(values)
+        def handle_option_truthy(values, context)
           is_truthy = true
 
           values.each do |value|
@@ -78,7 +78,7 @@ module VarBlock
           return is_truthy
         end
 
-        def handle_option_any(values)
+        def handle_option_any(values, context)
           values.each do |value|
             if value.is_a? Proc
               evaluated_value = ProcHandler.handle(value, context)

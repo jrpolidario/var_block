@@ -132,6 +132,22 @@ describe VarBlock::Globals do
           end
         end
       end
+
+      it 'has each Proc item evaluated in the context where getvar is called' do
+        temp_struct = Struct.new(:condition1, :condition2) do
+          def conditions_truthy?
+            with conditions: -> { condition1 } do |v|
+              v.merged_with conditions: -> { condition2 } do |v|
+                return getvar(v, :conditions, :truthy?)
+              end
+            end
+          end
+        end
+
+        temp_struct_object = temp_struct.new(true, true)
+        expect{temp_struct_object.conditions_truthy?}.to_not raise_error
+        expect(temp_struct_object.conditions_truthy?).to eq true
+      end
     end
 
     context 'when defined "variable" is not a Proc->VarArray, and :truthy? option is passed' do
@@ -230,6 +246,22 @@ describe VarBlock::Globals do
             expect(getvar(v, :conditions, :any?)).to eq false
           end
         end
+      end
+
+      it 'has each Proc item evaluated in the context where getvar is called' do
+        temp_struct = Struct.new(:condition1, :condition2) do
+          def conditions_truthy?
+            with conditions: -> { condition1 } do |v|
+              v.merged_with conditions: -> { condition2 } do |v|
+                return getvar(v, :conditions, :any?)
+              end
+            end
+          end
+        end
+
+        temp_struct_object = temp_struct.new(false, false)
+        expect{temp_struct_object.conditions_truthy?}.to_not raise_error
+        expect(temp_struct_object.conditions_truthy?).to eq false
       end
     end
 
