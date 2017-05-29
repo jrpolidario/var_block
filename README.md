@@ -344,6 +344,53 @@ my_variables.merged_with fruits: ['grape', 'mango'] do |v|
 end
 ```
 
+### Organising Complex Rails Validations (Gem's Initial Intended Purpose)
+```ruby
+class Post < ApplicationRecord
+  # let Post have attributes:
+  #   title:string
+  #   content:text
+  #   type:integer
+  #   publish_at:datetime
+
+  TYPE_GENERAL = 1
+  TYPE_PRIORITY = 2
+
+  with conditions: [] do |v|
+
+    v.merged_with conditions: -> { type == TYPE_GENERAL } do |v|
+
+      validates :publish_at, presence: true, if: -> { getvar(v, :conditions, :truthy?) }
+
+      v.merged_with conditions: -> { content.blank? } do |v|
+
+        validates :title, presence: true, if: -> { getvar(v, :conditions, :truthy?) }
+        validates :title, length: { maximum: 128 }, if: -> { getvar(v, :conditions, :truthy?) }
+      end
+
+      v.merged_with conditions: -> { content.present? } do |v|
+
+        validates :content, length: { maximum: 64 }, if: -> { getvar(v, :conditions, :truthy?) }
+        validates :title, length: { maximum: 64 }, if: -> { getvar(v, :conditions, :truthy?) }
+      end
+    end
+
+    v.merged_with conditions: -> { type == TYPE_PRIORITY } do |v|
+
+      validates :title, :content, presence: true, if: -> { getvar(v, :conditions, :truthy?) }
+      validates :title, length: { maximum: 64 }, if: -> { getvar(v, :conditions, :truthy?) }
+      validates :content, length: { maximum: 512 }, if: -> { getvar(v, :conditions, :truthy?) }
+      validates :publish_at, presence: true, if: -> { getvar(v, :conditions, :truthy?) }
+
+      v.merged_with conditions: -> { publish_at && publish_at >= Date.today } do |v|
+
+        validate if: -> { getvar(v, :conditions, :truthy?) } { errors.add(:publish_at, 'should not be a future date') }
+      end
+    end
+  end
+end
+```
+
 ## Motivation
 * I needed to find a way to group model validations in a Rails project because the model has lots of validations and complex `if -> { ... }` conditional logic. Therefore, in hopes to make it readable through indents and explicit declaration of "conditions" at the start of each block, I've written this small gem, and the code then has been a lot more readable and organised though at the expense of getting familiar with it.
 
