@@ -11,7 +11,7 @@ module VarBlock
       base.extend self
     end
 
-    def getvar(var_hash, index, *options)
+    def varblock_get(var_hash, index, *options)
       unsupported_options = (options - VarBlock::GetvarHandlers::OPTIONS)
       raise ArgumentError, "3rd argument options Array only supports #{VarBlock::GetvarHandlers::OPTIONS}. Does not support #{unsupported_options.map(&:inspect).join(', ')}" if unsupported_options.any?
       raise ArgumentError, "1st argument should be a VarHash object, but is found to be a #{var_hash.class}" unless var_hash.is_a? VarHash
@@ -31,7 +31,7 @@ module VarBlock
       return_value
     end
 
-    def with(var_hash_parent = nil, **variables)
+    def varblock_with(var_hash_parent = nil, **variables)
       var_hash = VarHash.new_from_var_hash(var_hash: var_hash_parent)
 
       variables.each do |key, value|

@@ -15,13 +15,12 @@ module VarBlock
       new_var_hash
     end
 
-    def with(variables = {})
+    def varblock_with(variables = {})
       super(self, variables)
     end
 
-    # OVERRIDES Hash `merge`
-    def merge(variables)
-      raise ArgumentError, '`merge` does not accept a block. Are you looking for `merged_with` instead?' if block_given?
+    def varblock_merge(variables)
+      raise ArgumentError, '`varblock_merge` does not accept a block. Are you looking for `varblock_merged_with` instead?' if block_given?
       
       variables.each do |key, value|
         current_value = self[key]
@@ -41,10 +40,10 @@ module VarBlock
       end
     end
 
-    def merged_with(variables = {})
+    def varblock_merged_with(variables = {})
       cloned_self = self.clone
-      cloned_self.merge(variables)
-      cloned_self.with() { yield(cloned_self) }
+      cloned_self.varblock_merge(variables)
+      cloned_self.varblock_with() { yield(cloned_self) }
     end
   end
 end

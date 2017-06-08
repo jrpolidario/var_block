@@ -10,7 +10,7 @@
 ## Setup
 * Add the following to your `Gemfile`
   ```ruby
-  gem 'var_block', '~> 1.0.0'
+  gem 'var_block', '~> 1.1.0'
   ```
 * then run `bundle install`
 * to use:
@@ -22,21 +22,21 @@
 
 ### Basic
 ```ruby
-with fruit: 'apple' do |v|
-  puts getvar(v, :fruit)
+varblock_with fruit: 'apple' do |v|
+  puts varblock_get(v, :fruit)
   # => apple
 end
 ```
 
 ### Multiple
 ```ruby
-with(
+varblock_with(
   fruit: 'apple',
   vegetable: 'bean'
 ) do |v|
-  puts getvar(v, :fruit)
+  puts varblock_get(v, :fruit)
   # => apple
-  puts getvar(v, :vegetable)
+  puts varblock_get(v, :vegetable)
   # => bean
 end
 ```
@@ -45,29 +45,29 @@ end
 ```ruby
 current_fruit = 'banana'
 
-with fruit: -> { current_fruit } do |v|
-  puts getvar(v, :fruit)
+varblock_with fruit: -> { current_fruit } do |v|
+  puts varblock_get(v, :fruit)
   # => banana
 end
 ```
 
 ### Nesting
 ```ruby
-with fruit: 'orange' do |v|
-  puts getvar(v, :fruit)
+varblock_with fruit: 'orange' do |v|
+  puts varblock_get(v, :fruit)
   # => orange
 
-  v.with vegetable: 'lettuce' do |v|
-    puts getvar(v, :fruit)
+  v.varblock_with vegetable: 'lettuce' do |v|
+    puts varblock_get(v, :fruit)
     # => orange
-    puts getvar(v, :vegetable)
+    puts varblock_get(v, :vegetable)
     # => lettuce
   end
 
-  v.with vegetable: 'onion' do |v|
-    puts getvar(v, :fruit)
+  v.varblock_with vegetable: 'onion' do |v|
+    puts varblock_get(v, :fruit)
     # => orange
-    puts getvar(v, :vegetable)
+    puts varblock_get(v, :vegetable)
     # => onion
   end
 end
@@ -75,9 +75,9 @@ end
 
 ### Overriding
 ```ruby
-with fruit: 'orange' do |v|
-  v.with fruit: 'banana' do |v|
-    puts getvar(v, :fruit)
+varblock_with fruit: 'orange' do |v|
+  v.varblock_with fruit: 'banana' do |v|
+    puts varblock_get(v, :fruit)
     # => banana
   end
 end
@@ -86,10 +86,10 @@ end
 ### Merging
 * will wrap into an Array if not yet an Array
 ```ruby
-with fruits: 'apple' do |v|
-  v.merge fruits: 'banana'
+varblock_with fruits: 'apple' do |v|
+  v.varblock_merge fruits: 'banana'
 
-  puts getvar(v, :fruits)
+  puts varblock_get(v, :fruits)
   # => apple
   #    banana
 end
@@ -97,10 +97,10 @@ end
 
 * will concatenate with the Array if already an Array
 ```ruby
-with fruits: ['apple', 'banana'] do |v|
-  v.merge fruits: ['grape', 'mango']
+varblock_with fruits: ['apple', 'banana'] do |v|
+  v.varblock_merge fruits: ['grape', 'mango']
 
-  puts getvar(v, :fruits)
+  puts varblock_get(v, :fruits)
   # => apple
   #    banana
   #    grape
@@ -108,18 +108,18 @@ with fruits: ['apple', 'banana'] do |v|
 end
 ```
 
-* `merged_with` is just basically `merge + with` that accepts a block
+* `varblock_merged_with` is just basically `merge + with` that accepts a block
 ```ruby
-with fruits: ['apple', 'banana'] do |v|
-  v.merged_with fruits: ['grape', 'mango'] do |v|
-    puts getvar(v, :fruits)
+varblock_with fruits: ['apple', 'banana'] do |v|
+  v.varblock_merged_with fruits: ['grape', 'mango'] do |v|
+    puts varblock_get(v, :fruits)
     # => apple
     #    banana
     #    grape
     #    mango
   end
 
-  puts getvar(v, :fruits)
+  puts varblock_get(v, :fruits)
   # => apple
   #    banana
 end
@@ -127,7 +127,7 @@ end
 
 ### DSL Explanation
 ```ruby
-with(
+varblock_with(
   fruit: 'apple',
   vegetable: -> { 'bean' }
 ) do |v|
@@ -139,19 +139,19 @@ with(
   # from above, notice that a VarHash extends a Hash
   # therefore you can also use any Hash method as well (only except `merge`) like below.
 
-  # NOT RECOMMENDED. use `getvar(v, :fruit)` instead when getting the value as it automatically evaluates the value, amongst others things
+  # NOT RECOMMENDED. use `varblock_get(v, :fruit)` instead when getting the value as it automatically evaluates the value, amongst others things
   puts v[:fruit]
   # => 'apple'
-  puts getvar(v, :fruit)
+  puts varblock_get(v, :fruit)
   # => 'apple'
   puts v[:vegetable]
   # => #<Proc:0x00...>
-  puts getvar(v, :vegetable)
+  puts varblock_get(v, :vegetable)
   # => 'bean'
 
-  # NOT RECOMMENDED. use `v.with(fruit: 'banana')` block instead when overwriting the value, as encapsulation is the main purpose of this gem
+  # NOT RECOMMENDED. use `v.varblock_with(fruit: 'banana')` block instead when overwriting the value, as encapsulation is the main purpose of this gem
   v[:fruit] = 'banana'
-  v.with(fruit: 'banana') do
+  v.varblock_with(fruit: 'banana') do
     # ...
   end
 end
@@ -161,19 +161,19 @@ end
 #### :truthy?
 * mimics "AND" logical operator for merged variables
 ```ruby
-with conditions: 1.is_a?(Integer) do |v|
-  v.merge conditions: !false
+varblock_with conditions: 1.is_a?(Integer) do |v|
+  v.varblock_merge conditions: !false
 
-  puts getvar(v, :conditions, :truthy?)
+  puts varblock_get(v, :conditions, :truthy?)
   # => true
 end
 ```
 
 ```ruby
-with conditions: 1.is_a?(String) do |v|
-  v.merge conditions: !false
+varblock_with conditions: 1.is_a?(String) do |v|
+  v.varblock_merge conditions: !false
 
-  puts getvar(v, :conditions, :truthy?)
+  puts varblock_get(v, :conditions, :truthy?)
   # => false
 end
 ```
@@ -184,20 +184,20 @@ condition2 = true
 condition3 = false
 condition4 = true
 
-with conditions: -> { condition1 } do |v|
+varblock_with conditions: -> { condition1 } do |v|
 
-  v.merged_with conditions: -> { condition2 } do |v|
-    puts getvar(v, :conditions, :truthy?)
+  v.varblock_merged_with conditions: -> { condition2 } do |v|
+    puts varblock_get(v, :conditions, :truthy?)
     # => true
   end
 
-  v.merged_with conditions: -> { condition3 } do |v|
-    puts getvar(v, :conditions, :truthy?)
+  v.varblock_merged_with conditions: -> { condition3 } do |v|
+    puts varblock_get(v, :conditions, :truthy?)
     # => false
 
-    v.merged_with conditions: -> { condition4 } do |v|
+    v.varblock_merged_with conditions: -> { condition4 } do |v|
       # returns false because condition3 above is already false. This will not propagate and therefore would not run the proc above for condition4
-      puts getvar(v, :conditions, :truthy?)
+      puts varblock_get(v, :conditions, :truthy?)
       # => false
     end
   end
@@ -207,19 +207,19 @@ end
 #### :any?
 * mimics "OR" logical operator for merged variables
 ```ruby
-with conditions: 1.is_a?(Integer) do |v|
-  v.merge conditions: false
+varblock_with conditions: 1.is_a?(Integer) do |v|
+  v.varblock_merge conditions: false
 
-  puts getvar(v, :conditions, :any?)
+  puts varblock_get(v, :conditions, :any?)
   # => true
 end
 ```
 
 ```ruby
-with conditions: 1.is_a?(String) do |v|
-  v.merge conditions: false
+varblock_with conditions: 1.is_a?(String) do |v|
+  v.varblock_merge conditions: false
 
-  puts getvar(v, :conditions, :any?)
+  puts varblock_get(v, :conditions, :any?)
   # => false
 end
 ```
@@ -230,20 +230,20 @@ condition2 = false
 condition3 = true
 condition4 = false
 
-with conditions: -> { condition1 } do |v|
+varblock_with conditions: -> { condition1 } do |v|
 
-  v.merged_with conditions: -> { condition2 } do |v|
-    puts getvar(v, :conditions, :any?)
+  v.varblock_merged_with conditions: -> { condition2 } do |v|
+    puts varblock_get(v, :conditions, :any?)
     # => false
   end
 
-  v.merged_with conditions: -> { condition3 } do |v|
-    puts getvar(v, :conditions, :any?)
+  v.varblock_merged_with conditions: -> { condition3 } do |v|
+    puts varblock_get(v, :conditions, :any?)
     # => true
 
-    v.merged_with conditions: -> { condition4 } do |v|
+    v.varblock_merged_with conditions: -> { condition4 } do |v|
       # returns true because condition3 above is already true. This will not propagate and therefore would not run the proc above for condition4
-      puts getvar(v, :conditions, :any?)
+      puts varblock_get(v, :conditions, :any?)
       # => true
     end
   end
@@ -272,12 +272,12 @@ class Fruit
 
 
   # usage example
-  with(ripe_condition: -> { is_ripe }) do |v|
-    set_edible if: -> { getvar(v, :ripe_condition) } 
+  varblock_with(ripe_condition: -> { is_ripe }) do |v|
+    set_edible if: -> { varblock_get(v, :ripe_condition) } 
   end
 
-  with(unripe_condition: -> { !is_ripe }) do |v|
-    set_inedible if: -> { getvar(v, :unripe_condition) }
+  varblock_with(unripe_condition: -> { !is_ripe }) do |v|
+    set_inedible if: -> { varblock_get(v, :unripe_condition) }
   end
 
 
@@ -307,17 +307,17 @@ fruit.is_inedible?
 ### Advanced
 * you can specify a "scope"
 ```ruby
-with fruit: 'apple' do |v|
-  v.with fruit: 'banana' do |vv|
-    vv.with fruit: 'grape' do |vvv|
-      vvv.with fruit: 'mango' do |vvvv|
-        puts getvar(v, :fruit)
+varblock_with fruit: 'apple' do |v|
+  v.varblock_with fruit: 'banana' do |vv|
+    vv.varblock_with fruit: 'grape' do |vvv|
+      vvv.varblock_with fruit: 'mango' do |vvvv|
+        puts varblock_get(v, :fruit)
         # => apple
-        puts getvar(vv, :fruit)
+        puts varblock_get(vv, :fruit)
         # => banana
-        puts getvar(vvv, :fruit)
+        puts varblock_get(vvv, :fruit)
         # => grape
-        puts getvar(vvvv, :fruit)
+        puts varblock_get(vvvv, :fruit)
         # => mango
       end
     end
@@ -329,14 +329,14 @@ end
 ```ruby
 my_variables = nil
 
-with fruits: 'apple' do |v|
-  v.merged_with fruits: 'banana' do |v|
+varblock_with fruits: 'apple' do |v|
+  v.varblock_merged_with fruits: 'banana' do |v|
     my_variables = v
   end
 end
 
-my_variables.merged_with fruits: ['grape', 'mango'] do |v|
-  puts getvar(v, :fruits)
+my_variables.varblock_merged_with fruits: ['grape', 'mango'] do |v|
+  puts varblock_get(v, :fruits)
   # => apple
   #    banana
   #    grape
@@ -356,35 +356,35 @@ class Post < ApplicationRecord
   CATEGORY_GENERAL = 1
   CATEGORY_PRIORITY = 2
 
-  with conditions: [] do |v|
+  varblock_with conditions: [] do |v|
 
-    v.merged_with conditions: -> { category == CATEGORY_GENERAL } do |v|
+    v.varblock_merged_with conditions: -> { category == CATEGORY_GENERAL } do |v|
 
-      validates :publish_at, presence: true, if: -> { getvar(v, :conditions, :truthy?) }
+      validates :publish_at, presence: true, if: -> { varblock_get(v, :conditions, :truthy?) }
 
-      v.merged_with conditions: -> { content.blank? } do |v|
+      v.varblock_merged_with conditions: -> { content.blank? } do |v|
 
-        validates :title, presence: true, if: -> { getvar(v, :conditions, :truthy?) }
-        validates :title, length: { maximum: 128 }, if: -> { getvar(v, :conditions, :truthy?) }
+        validates :title, presence: true, if: -> { varblock_get(v, :conditions, :truthy?) }
+        validates :title, length: { maximum: 128 }, if: -> { varblock_get(v, :conditions, :truthy?) }
       end
 
-      v.merged_with conditions: -> { content.present? } do |v|
+      v.varblock_merged_with conditions: -> { content.present? } do |v|
 
-        validates :content, length: { maximum: 64 }, if: -> { getvar(v, :conditions, :truthy?) }
-        validates :title, length: { maximum: 64 }, if: -> { getvar(v, :conditions, :truthy?) }
+        validates :content, length: { maximum: 64 }, if: -> { varblock_get(v, :conditions, :truthy?) }
+        validates :title, length: { maximum: 64 }, if: -> { varblock_get(v, :conditions, :truthy?) }
       end
     end
 
-    v.merged_with conditions: -> { category == CATEGORY_PRIORITY } do |v|
+    v.varblock_merged_with conditions: -> { category == CATEGORY_PRIORITY } do |v|
 
-      validates :title, :content, presence: true, if: -> { getvar(v, :conditions, :truthy?) }
-      validates :title, length: { maximum: 64 }, if: -> { getvar(v, :conditions, :truthy?) }
-      validates :content, length: { maximum: 512 }, if: -> { getvar(v, :conditions, :truthy?) }
-      validates :publish_at, presence: true, if: -> { getvar(v, :conditions, :truthy?) }
+      validates :title, :content, presence: true, if: -> { varblock_get(v, :conditions, :truthy?) }
+      validates :title, length: { maximum: 64 }, if: -> { varblock_get(v, :conditions, :truthy?) }
+      validates :content, length: { maximum: 512 }, if: -> { varblock_get(v, :conditions, :truthy?) }
+      validates :publish_at, presence: true, if: -> { varblock_get(v, :conditions, :truthy?) }
 
-      v.merged_with conditions: -> { publish_at && publish_at >= Date.today } do |v|
+      v.varblock_merged_with conditions: -> { publish_at && publish_at >= Date.today } do |v|
 
-        validate if: -> { getvar(v, :conditions, :truthy?) } { errors.add(:publish_at, 'should not be a future date') }
+        validate if: -> { varblock_get(v, :conditions, :truthy?) } { errors.add(:publish_at, 'should not be a future date') }
       end
     end
   end
@@ -395,7 +395,7 @@ end
 * I needed to find a way to group model validations in a Rails project because the model has lots of validations and complex `if -> { ... }` conditional logic. Therefore, in hopes to make it readable through indents and explicit declaration of "conditions" at the start of each block, I've written this small gem, and the code then has been a lot more readable and organised though at the expense of getting familiar with it.
 
 ## TODOs
-* pass in also the `binding` of the current context where `getvar` is called into the variable-procs so that the procs are executed with the same `binding` (local variables exactly the same) as the caller context. Found [dynamic_binding](https://github.com/niklasb/ruby-dynamic-binding), but I couldn't think of a way to skip passing in `binding` as an argument to `getvar` in hopes to make `getvar` as short as possible
+* pass in also the `binding` of the current context where `varblock_get` is called into the variable-procs so that the procs are executed with the same `binding` (local variables exactly the same) as the caller context. Found [dynamic_binding](https://github.com/niklasb/ruby-dynamic-binding), but I couldn't think of a way to skip passing in `binding` as an argument to `varblock_get` in hopes to make `varblock_get` as short as possible
 
 ## Contributing
 * pull requests and forks are very much welcomed! :) Let me know if you find any bug! Thanks
