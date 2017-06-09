@@ -108,7 +108,7 @@ varblock_with fruits: ['apple', 'banana'] do |v|
 end
 ```
 
-* `varblock_merged_with` is just basically `merge + with` that accepts a block
+* `varblock_merged_with` is just basically `varblock_merge + varblock_with` that accepts a block
 ```ruby
 varblock_with fruits: ['apple', 'banana'] do |v|
   v.varblock_merged_with fruits: ['grape', 'mango'] do |v|
@@ -137,7 +137,7 @@ varblock_with(
   # => true
 
   # from above, notice that a VarHash extends a Hash
-  # therefore you can also use any Hash method as well (only except `merge`) like below.
+  # therefore you can also use any Hash method as well like below.
 
   # NOT RECOMMENDED. use `varblock_get(v, :fruit)` instead when getting the value as it automatically evaluates the value, amongst others things
   puts v[:fruit]
